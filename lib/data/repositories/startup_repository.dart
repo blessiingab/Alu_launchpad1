@@ -26,6 +26,19 @@ class StartupRepository {
     });
   }
 
+  /// Every startup an admin owns, live. `whereIn` caps at 30 ids, far
+  /// more than realistic here. Empty list short-circuits rather than
+  /// sending an invalid empty `whereIn`.
+  Stream<List<Startup>> startupsStream(List<String> startupIds) {
+    if (startupIds.isEmpty) return Stream.value(const []);
+    return _startupsCol
+        .where(FieldPath.documentId, whereIn: startupIds)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((d) => Startup.fromMap(d.id, d.data()))
+            .toList());
+  }
+
   Future<Startup?> fetchStartup(String startupId) async {
     final snap = await _startupsCol.doc(startupId).get();
     if (!snap.exists || snap.data() == null) return null;

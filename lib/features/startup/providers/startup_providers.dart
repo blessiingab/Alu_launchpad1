@@ -8,20 +8,24 @@ final startupRepositoryProvider = Provider<StartupRepository>((ref) {
   return StartupRepository();
 });
 
-/// Live stream of the current startup_admin's own startup profile.
-/// Null while the admin hasn't created a profile yet — the router uses
-/// that to send them to the "create your startup" screen.
-final myStartupProvider = StreamProvider<Startup?>((ref) {
+/// Every startup the current admin owns, live — one admin can own more
+/// than one startup, so this is a list rather than a single stream.
+/// Every screen that used to watch a single `myStartupProvider` now
+/// watches this and handles zero/one/many.
+final myStartupsProvider = StreamProvider<List<Startup>>((ref) {
   final userData = ref.watch(currentUserDataProvider).value;
-  final startupId = userData?.startupId;
-  if (startupId == null) return Stream.value(null);
-  return ref.watch(startupRepositoryProvider).startupStream(startupId);
+  final startupIds = userData?.startupIds ?? const [];
+  if (startupIds.isEmpty) return Stream.value(const []);
+  return ref.watch(startupRepositoryProvider).startupsStream(startupIds);
 });
 
 class StartupProfileController extends AsyncNotifier<void> {
   @override
   Future<void> build() async {}
 
+  /// Creates a new startup for the signed-in admin. Safe to call more
+  /// than once — each call adds another startup to their startupIds
+  /// list rather than replacing the previous one.
   Future<void> createStartupProfile({
     required String name,
     required String description,
@@ -43,6 +47,29 @@ class StartupProfileController extends AsyncNotifier<void> {
       );
 
       await authRepo.attachStartupId(uid, startupId);
+    });
+  }
+
+  /// Edits one of the admin's existing startups. Mirrors
+  /// StartupRepository.updateProfile()'s fields only (name/description/
+  /// category) — verificationStatus and verificationNote are never
+  /// touched here, matching the Firestore rule that blocks a startup
+  /// admin from changing their own verification status.
+  Future<void> editStartupProfile({
+    required String startupId,
+    required String name,
+    required String description,
+    required String category,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final startupRepo = ref.read(startupRepositoryProvider);
+      await startupRepo.updateProfile(
+        startupId: startupId,
+        name: name,
+        description: description,
+        category: category,
+      );
     });
   }
 }

@@ -77,8 +77,41 @@ class AuthRepository {
     return _auth.sendPasswordResetEmail(email: email);
   }
 
-  /// Links a startup_admin user to the startup they just created.
+  /// Links a startup_admin user to a startup they just created. Uses
+  /// arrayUnion so an admin can own more than one startup over time
+  /// without this call clobbering earlier ones.
   Future<void> attachStartupId(String uid, String startupId) {
-    return _usersCol.doc(uid).update({'startupId': startupId});
+    return _usersCol.doc(uid).update({
+      'startupIds': FieldValue.arrayUnion([startupId]),
+    });
+  }
+
+  /// Adds or removes a single opportunity id from the student's
+  /// `bookmarks` array. Uses Firestore's arrayUnion/arrayRemove so
+  /// concurrent toggles from other devices never clobber each other.
+  Future<void> setBookmark({
+    required String uid,
+    required String opportunityId,
+    required bool bookmarked,
+  }) {
+    return _usersCol.doc(uid).update({
+      'bookmarks': bookmarked
+          ? FieldValue.arrayUnion([opportunityId])
+          : FieldValue.arrayRemove([opportunityId]),
+    });
+  }
+
+  /// Updates editable profile fields (name, skills) for the signed-in
+  /// user. Email/role are intentionally not editable here.
+  Future<void> updateProfile({
+    required String uid,
+    String? name,
+    List<String>? skills,
+  }) {
+    final updates = <String, dynamic>{};
+    if (name != null) updates['name'] = name;
+    if (skills != null) updates['skills'] = skills;
+    if (updates.isEmpty) return Future.value();
+    return _usersCol.doc(uid).update(updates);
   }
 }
