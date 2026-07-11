@@ -68,6 +68,15 @@ class AuthController extends AsyncNotifier<void> {
   Future<void> signOut() async {
     await _repo.signOut();
   }
+
+  Future<void> updateProfile({String? name, List<String>? skills}) async {
+    final uid = _repo.currentUser?.uid;
+    if (uid == null) return;
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await _repo.updateProfile(uid: uid, name: name, skills: skills);
+    });
+  }
 }
 
 final authControllerProvider =
