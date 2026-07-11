@@ -29,7 +29,8 @@ class AppUser {
   final String email;
   final UserRole role;
   final List<String> skills; // relevant to students
-  final String? startupId; // relevant to startupAdmin
+  final List<String> startupIds; // relevant to startupAdmin — one admin
+  // can own multiple startups, so this is a list rather than a single id.
   final List<String> bookmarks; // opportunity ids
   final DateTime? createdAt;
 
@@ -39,19 +40,30 @@ class AppUser {
     required this.email,
     required this.role,
     this.skills = const [],
-    this.startupId,
+    this.startupIds = const [],
     this.bookmarks = const [],
     this.createdAt,
   });
 
   factory AppUser.fromMap(String uid, Map<String, dynamic> map) {
+    // Back-compat: earlier versions stored a single `startupId` string
+    // instead of a `startupIds` list. Read whichever is present.
+    final List<String> resolvedStartupIds;
+    if (map['startupIds'] is List) {
+      resolvedStartupIds = List<String>.from(map['startupIds'] as List);
+    } else if (map['startupId'] is String) {
+      resolvedStartupIds = [map['startupId'] as String];
+    } else {
+      resolvedStartupIds = const [];
+    }
+
     return AppUser(
       uid: uid,
       name: map['name'] as String? ?? '',
       email: map['email'] as String? ?? '',
       role: userRoleFromString(map['role'] as String? ?? 'student'),
       skills: List<String>.from(map['skills'] as List? ?? const []),
-      startupId: map['startupId'] as String?,
+      startupIds: resolvedStartupIds,
       bookmarks: List<String>.from(map['bookmarks'] as List? ?? const []),
       createdAt: (map['createdAt'] as Timestamp?)?.toDate(),
     );
@@ -63,7 +75,7 @@ class AppUser {
       'email': email,
       'role': userRoleToString(role),
       'skills': skills,
-      'startupId': startupId,
+      'startupIds': startupIds,
       'bookmarks': bookmarks,
       'createdAt': createdAt == null
           ? FieldValue.serverTimestamp()
@@ -74,7 +86,7 @@ class AppUser {
   AppUser copyWith({
     String? name,
     List<String>? skills,
-    String? startupId,
+    List<String>? startupIds,
     List<String>? bookmarks,
   }) {
     return AppUser(
@@ -83,7 +95,7 @@ class AppUser {
       email: email,
       role: role,
       skills: skills ?? this.skills,
-      startupId: startupId ?? this.startupId,
+      startupIds: startupIds ?? this.startupIds,
       bookmarks: bookmarks ?? this.bookmarks,
       createdAt: createdAt,
     );
