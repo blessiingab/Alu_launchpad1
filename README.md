@@ -108,7 +108,7 @@ Installation
 Clone the repository.
 
 ```bash
-git clone https://github.com/your-username/alu-launchpad.git
+git clone https://github.com/blessiingab/alu-launchpad.git
 ```
 
 Navigate to the project directory.
