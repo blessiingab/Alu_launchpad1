@@ -5,6 +5,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../data/models/opportunity.dart';
 import '../../../data/models/startup.dart';
 import '../../../shared/widgets/opportunity_card.dart';
+import '../../applications/screens/application_screen.dart';
 import '../../startup/providers/startup_providers.dart';
 import '../providers/opportunity_providers.dart';
 import 'post_opportunity_screen.dart';
