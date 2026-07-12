@@ -36,7 +36,7 @@ class NotificationController extends AsyncNotifier<void> {
     state = await AsyncValue.guard(
       () => ref.read(notificationRepositoryProvider).markAsRead(notificationId),
     );
-  }
+  } 
 
   Future<void> markAllAsRead() async {
     final userData = ref.read(currentUserDataProvider).value;
