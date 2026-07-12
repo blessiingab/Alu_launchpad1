@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../applications/screens/applicants_screen.dart';
+import '../../applications/screens/application_screen.dart';
 import '../../opportunities/screens/student_home_screen.dart';
 import 'bookmarks_screen.dart';
 import 'student_profile_screen.dart';
@@ -22,7 +22,7 @@ class _StudentShellScreenState extends State<StudentShellScreen> {
 
   static const _tabs = [
     StudentHomeScreen(),
-    ApplicantsScreen(),
+    ApplicationScreen(),
     BookmarksScreen(),
     StudentProfileScreen(),
   ];

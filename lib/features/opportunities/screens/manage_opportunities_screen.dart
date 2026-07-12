@@ -7,7 +7,6 @@ import '../../../data/models/startup.dart';
 import '../../../shared/widgets/opportunity_card.dart';
 import '../../startup/providers/startup_providers.dart';
 import '../providers/opportunity_providers.dart';
-import '../../applications/screens/applicants_screen.dart';
 import 'post_opportunity_screen.dart';
 
 class ManageOpportunitiesScreen extends ConsumerWidget {
@@ -111,7 +110,7 @@ class ManageOpportunitiesScreen extends ConsumerWidget {
                     } else if (value == 'applicants') {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => ApplicantsScreen(opportunity: opportunity),
+                          builder: (_) => ApplicationScreen(opportunity: opportunity),
                         ),
                       );
                     } else if (value == 'toggle') {
