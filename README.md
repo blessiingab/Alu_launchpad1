@@ -2,7 +2,7 @@
 
 ALU LaunchPad is a Flutter and Firebase application that connects African Leadership University (ALU) students with internships, freelance work, and project opportunities posted by verified student-led startups within the ALU community.
 
-Today, opportunities are often shared through WhatsApp groups and word of mouth. There is no centralized platform to track applications or verify whether a startup posting a role is legitimate. LaunchPad solves this problem by enforcing one key rule throughout both the app and Firestore Security Rules:
+
 
 > **A startup cannot post opportunities until it has been verified, and it cannot verify itself.**
 
