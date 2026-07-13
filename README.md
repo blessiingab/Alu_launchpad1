@@ -53,8 +53,8 @@ See the **Roadmap** section for planned improvements.
 | Language         | Dart                                      |
 | Backend          | Firebase Authentication & Cloud Firestore |
 | State Management | Flutter Riverpod                          |
-| Navigation       | GoRouter                                  |
-| Fonts            | Google Fonts (Space Grotesk & Work Sans)  |
+| Navigation       | GoRouter                                  
+  |
 
 The application is built entirely with **Riverpod**. Although an earlier prototype considered Bloc/Cubit, the final implementation uses Riverpod throughout the project.
 
